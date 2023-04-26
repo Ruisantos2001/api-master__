@@ -1,4 +1,5 @@
 package paises.api.domain;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.*;
 import paises.api.service.CoutryServiceImpl;
@@ -12,7 +13,7 @@ import paises.api.service.CoutryServiceImpl;
 @Setter
 @NoArgsConstructor
 @EqualsAndHashCode(of="id")
-
+@JsonIgnoreProperties({"hibernateLazyInitializer"})
 public class Pais
 {
      @Id @GeneratedValue (strategy=GenerationType.IDENTITY)
@@ -22,20 +23,20 @@ public class Pais
      public long getId(){return id;}
      public void setId(long id){ this.id=id;}
 
-     public Pais(CoutryServiceImpl.DadoscriarPais dados)
+     public Pais(CoutryServiceImpl.CreateCountryData data)
      {
-         this.name=dados.name();
-         this.capital=dados.capital();
-         this.region=dados.region();
-         this.subregion=dados.subregion();
-         this.area=dados.area();
+         this.name=data.name();
+         this.capital=data.capital();
+         this.region=data.region();
+         this.subregion=data.subregion();
+         this.area=data.area();
      }
 
-     public void modificardados(CoutryServiceImpl.DadosmodificarPais dados)
+     public void modifiycoutrydata(CoutryServiceImpl.ModifiyCountryData data)
      {
-         if(dados.capital()!=null)
-         this.capital=dados.capital();
-         if(dados.area()!=null)
-         this.area=dados.area();
+         if(data.capital()!=null)
+         this.capital=data.capital();
+         if(data.area()!=null)
+         this.area=data.area();
      }
 }

@@ -3,7 +3,6 @@ package paises.api.service;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -12,58 +11,30 @@ import org.springframework.stereotype.Service;
 import paises.api.domain.Pais;
 import paises.api.persistence.PaisRepository;
 
-
 @Service
 @NoArgsConstructor
 public class CoutryServiceImpl implements CoutryService
 {
     @Autowired //para instanciar o repositorio sozinho
-    private PaisRepository repository;
+    public PaisRepository repository;
 
-    public CoutryServiceImpl(PaisRepository repository) {
-        this.repository = repository;
-    }
-    public record DadoscriarPais(@NotBlank String name, @NotBlank String capital, @NotBlank String region, @NotBlank String subregion, @NotBlank String area)//uma classe imutavel , usada para enviar ou receber dados
+
+    public Page<ListCountryData>listall(@PageableDefault(size=10,sort={"nome"}) Pageable pageable) //método para mostrar paises, e ordenar os países por qualquer uma das suas propriedades.
     {
-
+        return repository.findAll(pageable).map(ListCountryData::new);
     }
 
-    public record DadosListagemPais(long id, String name, String capital, String area, String region)
+    public Pais create(@Valid CreateCountryData data)
     {
-        public DadosListagemPais(Pais pais )
-        {
-            this(pais.getId(),pais.getName(),pais.getCapital(),pais.getArea(),pais.getRegion());
-        }
+        Pais pais=new Pais(data);
+        repository.save(pais);
+        return pais;
     }
 
-    public record DadosmodificarPais(String capital, String area)
-    {
-
-    }
-
-    public record DadosDetalhadosPais(Long id, String name, String capital, String region, String subregion, String area)
-    {
-        public DadosDetalhadosPais(Pais pais)
-        {
-            this(pais.getId(),pais.getName(),pais.getCapital(),pais.getRegion(),pais.getSubregion(),pais.getArea());
-        }
-    }
-
-    public Page<DadosListagemPais>listall(@PageableDefault(size=10,sort={"nome"}) Pageable paginacao) //método para mostrar paises, e ordenar os países por qualquer uma das suas propriedades.
-    {
-         return repository.findAll(paginacao).map(DadosListagemPais::new);
-    }
-
-    public Pais create(@Valid DadoscriarPais dados)
-    {
-        Pais pais=new Pais(dados);
-       return repository.save(pais);
-    }
-
-    public Pais update(Long id,DadosmodificarPais dados)
+    public Pais update(Long id,ModifiyCountryData data)
     {
         Pais pais =repository.getReferenceById(id);
-        pais.modificardados(dados);
+        pais.modifiycoutrydata(data);
         Pais saved=repository.save(pais);
         return saved;
     }
@@ -76,5 +47,30 @@ public class CoutryServiceImpl implements CoutryService
     public Pais view(Long id)
     {
         return repository.getReferenceById(id);
+    }
+    public record CreateCountryData(@NotBlank String name, @NotBlank String capital, @NotBlank String region, @NotBlank String subregion, @NotBlank String area)//uma classe imutavel , usada para enviar ou receber dados
+    {
+
+    }
+
+    public record ListCountryData(long id, String name, String capital, String area, String region)
+    {
+        public ListCountryData(Pais pais )
+        {
+            this(pais.getId(),pais.getName(),pais.getCapital(),pais.getArea(),pais.getRegion());
+        }
+    }
+
+    public record ModifiyCountryData(String capital, String area)
+    {
+
+    }
+
+    public record ViewCountry(Long id, String name, String capital, String region, String subregion, String area)
+    {
+        public ViewCountry(Pais pais)
+        {
+            this(pais.getId(),pais.getName(),pais.getCapital(),pais.getRegion(),pais.getSubregion(),pais.getArea());
+        }
     }
 }
