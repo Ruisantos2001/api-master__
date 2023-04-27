@@ -8,34 +8,34 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.stereotype.Service;
-import paises.api.domain.Pais;
-import paises.api.persistence.PaisRepository;
+import paises.api.domain.Country;
+import paises.api.persistence.CoutryRepository;
 
 @Service
 @NoArgsConstructor
-public class CoutryServiceImpl implements CoutryService
+public class CountryServiceImpl implements CountryService
 {
     @Autowired //para instanciar o repositorio sozinho
-    public PaisRepository repository;
+    public CoutryRepository repository;
 
 
-    public Page<ListCountryData>listall(@PageableDefault(size=10,sort={"nome"}) Pageable pageable) //método para mostrar paises, e ordenar os países por qualquer uma das suas propriedades.
+    public Page<ListCountryData>listall(@PageableDefault(size=10,sort={"name"}) Pageable pageable) //método para mostrar paises, e ordenar os países por qualquer uma das suas propriedades.
     {
         return repository.findAll(pageable).map(ListCountryData::new);
     }
 
-    public Pais create(@Valid CreateCountryData data)
+    public Country create(@Valid CreateCountryData data)
     {
-        Pais pais=new Pais(data);
-        repository.save(pais);
-        return pais;
+        Country country=new Country(data);
+        repository.save(country);
+        return country;
     }
 
-    public Pais update(Long id,ModifiyCountryData data)
+    public Country update(Long id,ModifiyCountryData data)
     {
-        Pais pais =repository.getReferenceById(id);
-        pais.modifiycoutrydata(data);
-        Pais saved=repository.save(pais);
+        Country country =repository.getReferenceById(id);
+        country.modifiycoutrydata(data);
+        Country saved=repository.save(country);
         return saved;
     }
 
@@ -44,10 +44,9 @@ public class CoutryServiceImpl implements CoutryService
         repository.deleteById(id);
     }
 
-    public Pais view(Long id)
-    {
-        return repository.getReferenceById(id);
-    }
+    public Country view(Long id) { return repository.getReferenceById(id);}
+
+    //records
     public record CreateCountryData(@NotBlank String name, @NotBlank String capital, @NotBlank String region, @NotBlank String subregion, @NotBlank String area)//uma classe imutavel , usada para enviar ou receber dados
     {
 
@@ -55,9 +54,9 @@ public class CoutryServiceImpl implements CoutryService
 
     public record ListCountryData(long id, String name, String capital, String area, String region)
     {
-        public ListCountryData(Pais pais )
+        public ListCountryData(Country country )
         {
-            this(pais.getId(),pais.getName(),pais.getCapital(),pais.getArea(),pais.getRegion());
+            this(country.getId(),country.getName(),country.getCapital(),country.getArea(),country.getRegion());
         }
     }
 
@@ -68,9 +67,9 @@ public class CoutryServiceImpl implements CoutryService
 
     public record ViewCountry(Long id, String name, String capital, String region, String subregion, String area)
     {
-        public ViewCountry(Pais pais)
+        public ViewCountry(Country country)
         {
-            this(pais.getId(),pais.getName(),pais.getCapital(),pais.getRegion(),pais.getSubregion(),pais.getArea());
+            this(country.getId(),country.getName(),country.getCapital(),country.getRegion(),country.getSubregion(),country.getArea());
         }
     }
 }

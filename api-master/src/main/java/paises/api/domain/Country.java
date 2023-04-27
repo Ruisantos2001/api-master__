@@ -2,8 +2,7 @@ package paises.api.domain;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.*;
-import paises.api.service.CoutryServiceImpl;
-
+import paises.api.service.CountryServiceImpl;
 
 //JPA representação do obj Pais como tabela na bd
 
@@ -14,7 +13,7 @@ import paises.api.service.CoutryServiceImpl;
 @NoArgsConstructor
 @EqualsAndHashCode(of="id")
 @JsonIgnoreProperties({"hibernateLazyInitializer"})
-public class Pais
+public class Country
 {
      @Id @GeneratedValue (strategy=GenerationType.IDENTITY)
      private long id;
@@ -23,7 +22,7 @@ public class Pais
      public long getId(){return id;}
      public void setId(long id){ this.id=id;}
 
-     public Pais(CoutryServiceImpl.CreateCountryData data)
+     public Country(CountryServiceImpl.CreateCountryData data)
      {
          this.name=data.name();
          this.capital=data.capital();
@@ -32,7 +31,7 @@ public class Pais
          this.area=data.area();
      }
 
-     public void modifiycoutrydata(CoutryServiceImpl.ModifiyCountryData data)
+     public void modifiycoutrydata(CountryServiceImpl.ModifiyCountryData data)
      {
          if(data.capital()!=null)
          this.capital=data.capital();
